@@ -4,6 +4,21 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 // Reference prices are plausible EGP levels for well-known EGX names.
 // The feed itself is a client-side random-walk simulation for demo purposes.
 
+function Tri({ up }) {
+  return (
+    <svg viewBox="0 0 24 24" className="inline h-3 w-3 align-[-1px]" fill="currentColor" aria-hidden="true">
+      <path d={up ? 'M12 4l9 15H3z' : 'M12 20L3 5h18z'} />
+    </svg>
+  )
+}
+function Star({ on }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3l2.700 5.700 6.300.8-4.600 4.300 1.200 6.200L12 17l-5.600 3 1.200-6.200L3 9.500l6.300-.8z" />
+    </svg>
+  )
+}
+
 const SEED = [
   { sym: 'COMI', name: 'Commercial International Bank', ref: 78.4, vol: 4_210_000 },
   { sym: 'ETEL', name: 'Telecom Egypt', ref: 41.15, vol: 1_870_000 },
@@ -233,14 +248,14 @@ export default function App() {
       <header className="border-b border-line bg-panel">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded bg-amber-glow font-mono text-sm font-bold text-terminal">⌁</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded bg-amber-glow font-mono text-sm font-bold text-terminal"><svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 17l5-6 4 3 8-9" /></svg></span>
             <h1 className="text-lg font-bold tracking-tight">EGX Watch</h1>
           </div>
           <div className="num text-sm">
             <span className="mr-2 text-ink-dim">EGX30</span>
             <span className="font-semibold">{fmt(egx30.value, 0)}</span>
             <span className={`ml-2 ${egx30.chg >= 0 ? 'text-up' : 'text-down'}`}>
-              {egx30.chg >= 0 ? '▲' : '▼'} {fmt(Math.abs(egx30.chg) * 100)}%
+              <Tri up={egx30.chg >= 0} /> {fmt(Math.abs(egx30.chg) * 100)}%
             </span>
           </div>
           <div className="ml-auto flex items-center gap-4">
@@ -318,7 +333,7 @@ export default function App() {
                           aria-label={watch.includes(r.sym) ? `Remove ${r.sym} from watchlist` : `Add ${r.sym} to watchlist`}
                           className={`text-base leading-none transition-transform hover:scale-125 ${watch.includes(r.sym) ? 'text-amber-glow' : 'text-line hover:text-ink-dim'}`}
                         >
-                          {watch.includes(r.sym) ? '★' : '☆'}
+                          <Star on={watch.includes(r.sym)} />
                         </button>
                       </td>
                     </tr>
@@ -339,7 +354,7 @@ export default function App() {
                 <div className="text-right">
                   <div className="num text-2xl font-bold">{fmt(sel.last)}</div>
                   <div className={`num text-sm font-semibold ${selUp ? 'text-up' : 'text-down'}`}>
-                    {selUp ? '▲' : '▼'} {fmt(Math.abs(chg(sel)) * 100)}% today
+                    <Tri up={selUp} /> {fmt(Math.abs(chg(sel)) * 100)}% today
                   </div>
                 </div>
               </div>
@@ -358,7 +373,7 @@ export default function App() {
                 <span className="text-xs text-ink-dim">saved in your browser · star any row</span>
               </div>
               {watch.length === 0 ? (
-                <p className="px-3 py-4 text-sm text-ink-dim">Nothing starred yet. Hit ☆ on any ticker to track it here.</p>
+                <p className="px-3 py-4 text-sm text-ink-dim">Nothing starred yet. Hit the star on any ticker to track it here.</p>
               ) : (
                 <ul>
                   {watch.map((sym) => {
@@ -406,7 +421,7 @@ function Th({ label, k, sortKey, sortDir, onSort, right }) {
   return (
     <th className={`px-3 py-2 font-medium ${right ? 'text-right' : ''}`}>
       <button onClick={() => onSort(k)} className={`uppercase tracking-wider hover:text-ink ${active ? 'text-amber-glow' : ''}`}>
-        {label} {active ? (sortDir > 0 ? '↑' : '↓') : ''}
+        {label} {active && <svg viewBox="0 0 24 24" className="inline h-3 w-3 align-[-1px]" fill="none" stroke="currentColor" strokeWidth="3.500" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={sortDir > 0 ? 'M12 20V5M6 11l6-6 6 6' : 'M12 4v15M6 13l6 6 6-6'} /></svg>}
       </button>
     </th>
   )
